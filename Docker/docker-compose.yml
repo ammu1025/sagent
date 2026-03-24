@@ -1,0 +1,32 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: budget_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: budgettracker
+    ports:
+      - "3307:3306"
+
+  backend:
+    build: ./budget-tracker-backend
+    container_name: budget_backend
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/budgettracker
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+  frontend:
+    build: ./budget-tracker-frontend
+    container_name: budget_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
